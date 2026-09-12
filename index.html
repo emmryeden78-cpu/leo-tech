@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="LEO TECH — boutique en ligne d'électronique premium (smartphones, ordinateurs, audio, TV, accessoires) au Cameroun.">
+<title>LEO TECH — Électronique Premium</title>
+
+<!-- ─── Icône & partage (Open Graph / Twitter Card) ───────────────────
+     og:image pointe vers og-image.png (fourni à côté de ce fichier).
+     Une fois le site publié, remplacez "og-image.png" et "index.html"
+     ci-dessous par l'URL COMPLÈTE de votre site (ex: https://votre-compte.github.io/electroshop/)
+     pour un aperçu correct quand le lien est partagé sur WhatsApp/Facebook. -->
+<link rel="icon" type="image/png" href="favicon.png">
+<meta name="theme-color" content="#0a0a0f">
+<meta property="og:type" content="website">
+<meta property="og:title" content="LEO TECH — Électronique Premium">
+<meta property="og:description" content="Smartphones, ordinateurs, audio, TV et accessoires au meilleur prix, livrés au Cameroun.">
+<meta property="og:image" content="og-image.png">
+<meta property="og:url" content="index.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="LEO TECH — Électronique Premium">
+<meta name="twitter:description" content="Smartphones, ordinateurs, audio, TV et accessoires au meilleur prix, livrés au Cameroun.">
+<meta name="twitter:image" content="og-image.png">
+
+<!-- ─── Statistiques de visite (optionnel) ────────────────────────────
+     Pour suivre vos visiteurs, créez un compte gratuit chez Plausible.io
+     ou Google Analytics puis collez leur extrait de code de suivi ici.
+     Laissé vide par défaut : rien n'est envoyé à un tiers tant que vous
+     ne collez pas votre propre code. -->
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ─── TOAST ───────────────────────────────────── -->
+<div class="toast" id="toast"></div>
+
+<!-- ─── NAV ────────────────────────────────────── -->
+<nav id="main-nav">
+  <div class="nav-logo" onclick="showPage('home')">⚡ LEO TECH</div>
+  <div class="nav-links">
+    <button onclick="showPage('home'); setActiveNav(this)" class="active-nav">Accueil</button>
+    <button onclick="showPage('shop'); setActiveNav(this)">Boutique</button>
+    <button onclick="showPage('cart'); setActiveNav(this)">Mon Panier</button>
+  </div>
+  <div class="nav-actions">
+    <button class="cart-btn" onclick="showPage('cart')">
+      🛒 Panier
+      <span class="cart-badge" id="cart-badge">0</span>
+    </button>
+    <a class="admin-btn" href="admin.html">⚙ Admin</a>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════════
+     PAGE : HOME
+══════════════════════════════════════════════ -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+    <div class="hero-content">
+      <div class="hero-tag">🚀 Nouveautés disponibles</div>
+      <h1>La tech de demain,<br><span>disponible aujourd'hui</span></h1>
+      <p>Smartphones, ordinateurs, audio, accessoires — tout ce dont vous avez besoin au meilleur prix, livré rapidement partout au Cameroun.</p>
+      <div class="hero-cta">
+        <button class="btn-primary" onclick="showPage('shop')">Explorer la boutique</button>
+        <button class="btn-outline" onclick="showPage('shop')">Voir les offres</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Categories -->
+  <div style="padding:2rem; text-align:center;">
+    <h2 style="font-family:var(--font-display);font-size:1.4rem;font-weight:800;margin-bottom:1.5rem;">Catégories populaires</h2>
+    <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+      <div class="chip active-chip" style="padding:0.7rem 1.4rem;font-size:0.9rem;" onclick="filterCat('Smartphone');showPage('shop')">📱 Smartphones</div>
+      <div class="chip" style="padding:0.7rem 1.4rem;font-size:0.9rem;" onclick="filterCat('Ordinateur');showPage('shop')">💻 Ordinateurs</div>
+      <div class="chip" style="padding:0.7rem 1.4rem;font-size:0.9rem;" onclick="filterCat('Audio');showPage('shop')">🎧 Audio</div>
+      <div class="chip" style="padding:0.7rem 1.4rem;font-size:0.9rem;" onclick="filterCat('TV');showPage('shop')">📺 TV & Écrans</div>
+      <div class="chip" style="padding:0.7rem 1.4rem;font-size:0.9rem;" onclick="filterCat('Accessoire');showPage('shop')">⌚ Accessoires</div>
+    </div>
+  </div>
+
+  <!-- Featured -->
+  <div>
+    <div class="section-title">🔥 Produits vedettes</div>
+    <div class="products-grid" id="featured-grid"></div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     PAGE : SHOP
+══════════════════════════════════════════════ -->
+<div class="page" id="page-shop">
+  <div class="shop-controls">
+    <div class="search-box">
+      <span>🔍</span>
+      <input type="text" placeholder="Rechercher un produit..." id="search-input" oninput="renderShop()">
+    </div>
+    <div class="filter-chips" id="filter-chips">
+      <div class="chip active-chip" onclick="setFilter('Tous',this)">Tous</div>
+      <div class="chip" onclick="setFilter('Smartphone',this)">📱 Smartphones</div>
+      <div class="chip" onclick="setFilter('Ordinateur',this)">💻 Ordis</div>
+      <div class="chip" onclick="setFilter('Audio',this)">🎧 Audio</div>
+      <div class="chip" onclick="setFilter('TV',this)">📺 TV</div>
+      <div class="chip" onclick="setFilter('Accessoire',this)">⌚ Accessoires</div>
+    </div>
+    <select class="sort-select" id="sort-select" onchange="renderShop()">
+      <option value="default">Trier par défaut</option>
+      <option value="price-asc">Prix croissant</option>
+      <option value="price-desc">Prix décroissant</option>
+      <option value="name">Nom A→Z</option>
+    </select>
+  </div>
+  <div class="section-title" id="shop-title">Tous les produits</div>
+  <div class="products-grid" id="shop-grid"></div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PAGE : CART
+══════════════════════════════════════════════ -->
+<div class="page" id="page-cart">
+  <div class="cart-container">
+    <h1 style="font-family:var(--font-display);font-size:1.8rem;font-weight:800;margin-bottom:1.5rem;">Mon Panier 🛒</h1>
+    <div id="cart-content"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PAGE : CHECKOUT
+══════════════════════════════════════════════ -->
+<div class="page" id="page-checkout">
+  <div class="checkout-container">
+    <div class="checkout-steps">
+      <div class="step active" id="step1"><div class="step-dot">1</div><span>Livraison</span></div>
+      <div class="step" id="step2"><div class="step-dot">2</div><span>Confirmation</span></div>
+    </div>
+    <div id="checkout-body"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PAGE : À PROPOS
+══════════════════════════════════════════════ -->
+<div class="page" id="page-about">
+  <div class="info-container">
+    <button class="back-link" onclick="showPage('home')">← Retour à la boutique</button>
+    <h1 id="about-title">À propos de LEO TECH</h1>
+    <p id="about-description">Boutique en ligne d'électronique premium au Cameroun.</p>
+    <h3>Contact</h3>
+    <p id="about-contact">—</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PAGE : CONDITIONS GÉNÉRALES DE VENTE
+══════════════════════════════════════════════ -->
+<div class="page" id="page-cgv">
+  <div class="info-container">
+    <button class="back-link" onclick="showPage('home')">← Retour à la boutique</button>
+    <h1>Conditions générales de vente</h1>
+    <h3>1. Objet</h3>
+    <p>Les présentes conditions régissent les ventes réalisées sur ce site entre <span id="cgv-shopname">la boutique</span> et ses clients.</p>
+    <h3>2. Prix</h3>
+    <p>Les prix sont indiqués en <span id="cgv-currency">FCFA</span>, toutes taxes comprises, hors frais de livraison éventuels précisés au moment de la commande.</p>
+    <h3>3. Commande</h3>
+    <p>Toute commande passée sur le site vaut acceptation des présentes conditions. Un récapitulatif est envoyé via WhatsApp au moment de la commande.</p>
+    <h3>4. Paiement</h3>
+    <p>Les modalités de paiement sont convenues directement avec la boutique via WhatsApp après la commande (paiement à la livraison ou Mobile Money selon accord).</p>
+    <h3>5. Livraison</h3>
+    <p>Les délais de livraison sont donnés à titre indicatif et peuvent varier selon la zone géographique.</p>
+    <h3>6. Retours et remboursements</h3>
+    <p>Tout produit défectueux ou non conforme peut être signalé dans les 48h suivant la réception pour échange ou remboursement, sous réserve de vérification.</p>
+    <h3>7. Contact</h3>
+    <p id="cgv-contact">Pour toute question, contactez-nous via WhatsApp ou par email.</p>
+  </div>
+</div>
+
+
+<!-- ─── FOOTER ─────────────────────────────────────── -->
+<footer id="site-footer">
+  <div class="footer-links">
+    <button onclick="showPage('about')">À propos</button>
+    <button onclick="showPage('cgv')">Conditions & retours</button>
+    <a href="#" id="footer-whatsapp" onclick="return false;">Contact WhatsApp</a>
+  </div>
+  <div class="footer-social" id="footer-social"></div>
+  <div id="footer-copy">© LEO TECH</div>
+</footer>
+
+
+<!-- ─── PRODUCT MODAL ──────────────────────────────── -->
+<div class="modal-overlay" id="product-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div></div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div>
+        <div class="modal-img" id="modal-img"></div>
+        <div class="modal-gallery-thumbs" id="modal-gallery"></div>
+      </div>
+      <div class="modal-details" id="modal-details"></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─── OFFRE SPÉCIALE (popup d'accueil) ────────────── -->
+<div class="modal-overlay" id="offer-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div></div>
+      <button class="modal-close" onclick="closeOfferModal(true)">✕</button>
+    </div>
+    <div class="offer-body">
+      <div id="offer-image-wrap"></div>
+      <div class="offer-badge" id="offer-badge" style="display:none"></div>
+      <h2 id="offer-title"></h2>
+      <p id="offer-desc"></p>
+      <button class="btn-primary" style="width:100%" id="offer-follow-btn" onclick="followOffer()">Voir l'offre</button>
+      <button class="offer-dismiss" onclick="closeOfferModal(true)">Non merci, continuer mes achats</button>
+    </div>
+  </div>
+</div>
+
+
+<script src="app.js"></script>
+<script>
+// ─── INIT (spécifique à la boutique publique) ──────────────────────
+loadDB();
+saveDB();
+updateBadge();
+renderFeatured();
+renderFooter();
+setTimeout(() => maybeShowOffer(false), 700);
+</script>
+</body>
+</html>

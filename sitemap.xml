@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Remplacez https://VOTRE-COMPTE.github.io/VOTRE-DEPOT/ par l'URL réelle
+     de votre site une fois publié sur GitHub Pages. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://VOTRE-COMPTE.github.io/VOTRE-DEPOT/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>

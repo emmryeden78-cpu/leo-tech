@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>LEO TECH — Administration</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<meta name="theme-color" content="#0a0a0f">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ─── TOAST ───────────────────────────────────── -->
+<div class="toast" id="toast"></div>
+
+<!-- ══════════════════════════════════════════════
+     PAGE : ADMIN LOGIN
+══════════════════════════════════════════════ -->
+<div class="page active" id="page-admin-login">
+  <div class="admin-gate">
+    <div class="login-card">
+      <div class="logo"><span>Admin</span> Panel</div>
+      <p>Accès réservé aux administrateurs</p>
+      <div class="checkout-form">
+        <div class="form-group">
+          <label>Identifiant</label>
+          <input type="text" id="admin-user" placeholder="admin">
+        </div>
+        <div class="form-group">
+          <label>Mot de passe</label>
+          <input type="password" id="admin-pass" placeholder="••••••">
+        </div>
+        <div class="login-error" id="login-error">❌ Identifiants incorrects</div>
+        <button class="login-btn" onclick="adminLogin()">Connexion →</button>
+      </div>
+      <p style="margin-top:1rem;font-size:0.78rem;color:var(--text-muted);" id="admin-demo-hint">Démo : admin / 1234</p>
+      <button onclick="window.location.href='index.html'" style="background:none;border:none;color:var(--text-muted);cursor:pointer;margin-top:0.5rem;font-size:0.85rem;">← Retour à la boutique</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     PAGE : ADMIN DASHBOARD
+══════════════════════════════════════════════ -->
+<div class="page" id="page-admin">
+  <nav style="position:sticky;top:0;z-index:100;background:rgba(10,10,15,0.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:64px;">
+    <div class="nav-logo-admin">⚙ LEO TECH Admin</div>
+    <div class="notif-wrap">
+      <button class="notif-bell" onclick="toggleNotifPanel()" title="Notifications">
+        🔔<span class="notif-badge" id="notif-badge" style="display:none">0</span>
+      </button>
+      <div class="notif-panel" id="notif-panel"></div>
+      <button onclick="adminLogout()" style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.2);color:var(--danger);padding:0.4rem 1rem;border-radius:8px;cursor:pointer;font-size:0.85rem;">Déconnexion</button>
+    </div>
+  </nav>
+  <div class="admin-layout">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+      <div class="admin-sidebar-title">Navigation</div>
+      <div class="sidebar-item active-admin" onclick="showAdminSection('overview',this)">📊 Vue d'ensemble</div>
+      <div class="sidebar-item" onclick="showAdminSection('products',this)">📦 Produits</div>
+      <div class="sidebar-item" onclick="showAdminSection('orders',this)">🧾 Commandes</div>
+      <div class="sidebar-item" onclick="showAdminSection('customers',this)">👥 Clients</div>
+      <div class="sidebar-item" onclick="showAdminSection('settings',this)">⚙ Paramètres</div>
+    </aside>
+    <!-- Main -->
+    <main class="admin-main">
+
+      <!-- Overview -->
+      <div class="admin-section active" id="admin-overview">
+        <div class="admin-header">
+          <h1>Vue d'ensemble</h1>
+          <p>Tableau de bord en temps réel</p>
+        </div>
+        <div class="stats-grid" id="stats-grid"></div>
+        <div class="chart-card">
+          <h3>📈 Chiffre d'affaires — 7 derniers jours</h3>
+          <canvas id="sales-chart" height="120"></canvas>
+        </div>
+        <div class="admin-table-wrap">
+          <div class="admin-table-header">
+            <h3>Commandes récentes</h3>
+          </div>
+          <div class="table-scroll">
+          <table>
+            <thead><tr><th>ID</th><th>Client</th><th>Produits</th><th>Total</th><th>Statut</th></tr></thead>
+            <tbody id="recent-orders-tbody"></tbody>
+          </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Products -->
+      <div class="admin-section" id="admin-products">
+        <div class="admin-header"><h1>Gestion des produits</h1><p>Ajouter, modifier, supprimer des produits — avec vraies photos</p></div>
+        <div class="add-product-form">
+          <h3 id="product-form-title">➕ Ajouter un produit</h3>
+          <input type="hidden" id="edit-id">
+          <div class="form-grid">
+            <div class="form-group"><label>Nom du produit</label><input type="text" id="p-name" placeholder="iPhone 15 Pro"></div>
+            <div class="form-group"><label>Catégorie</label>
+              <select id="p-cat">
+                <option>Smartphone</option><option>Ordinateur</option><option>Audio</option><option>TV</option><option>Accessoire</option>
+              </select>
+            </div>
+            <div class="form-group"><label>Prix (FCFA)</label><input type="number" id="p-price" placeholder="780000"></div>
+            <div class="form-group"><label>Ancien prix (FCFA)</label><input type="number" id="p-oldprice" placeholder="910000"></div>
+            <div class="form-group"><label>Stock</label><input type="number" id="p-stock" placeholder="50"></div>
+            <div class="form-group"><label>Emoji (repli si pas de photo)</label><input type="text" id="p-emoji" placeholder="📱"></div>
+            <div class="form-group" style="grid-column:1/-1"><label>Description</label><input type="text" id="p-desc" placeholder="Description courte..."></div>
+            <div class="form-group"><label>Badge</label>
+              <select id="p-badge"><option value="">Aucun</option><option value="new">Nouveau</option><option value="promo">Promo</option></select>
+            </div>
+            <div class="form-group"><label>Étoiles (1-5)</label><input type="number" id="p-stars" min="1" max="5" value="4" placeholder="4"></div>
+          </div>
+
+          <div style="margin-top:1.2rem;">
+            <label style="font-size:0.82rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:0.5rem;">📸 Photos du produit</label>
+            <div class="img-upload-zone" onclick="document.getElementById('p-image-file').click()">
+              📷 Cliquez pour ajouter une ou plusieurs photos depuis votre appareil (redimensionnées automatiquement)
+            </div>
+            <input type="file" id="p-image-file" accept="image/*" multiple style="display:none" onchange="handleImageFiles(event)">
+            <div class="url-add-row">
+              <input type="text" id="p-image-url" placeholder="ou collez une URL d'image (https://...)">
+              <button class="btn-small" onclick="addImageUrl()">+ Ajouter URL</button>
+            </div>
+            <div class="img-thumbs" id="p-image-thumbs"></div>
+          </div>
+
+          <div style="display:flex;gap:1rem;align-items:center;margin-top:1.2rem;">
+            <button class="btn-save" onclick="saveProduct()">💾 Sauvegarder</button>
+            <button onclick="cancelEdit()" style="background:none;border:1px solid var(--border);color:var(--text-muted);padding:0.6rem 1.2rem;border-radius:10px;cursor:pointer;font-size:0.85rem;">Annuler</button>
+          </div>
+        </div>
+        <div class="admin-table-wrap">
+          <div class="admin-table-header">
+            <h3>Catalogue produits</h3>
+            <span style="color:var(--text-muted);font-size:0.85rem;" id="product-count"></span>
+          </div>
+          <div class="table-scroll">
+          <table>
+            <thead><tr><th>Produit</th><th>Catégorie</th><th>Prix</th><th>Stock</th><th>Actions</th></tr></thead>
+            <tbody id="products-tbody"></tbody>
+          </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Orders -->
+      <div class="admin-section" id="admin-orders">
+        <div class="admin-header"><h1>Commandes</h1><p>Gérez les commandes clients</p></div>
+        <div class="admin-table-wrap">
+          <div class="admin-table-header"><h3>Toutes les commandes</h3><button class="btn-small" onclick="exportOrdersCSV()">⬇ Exporter en CSV</button></div>
+          <div class="table-scroll">
+          <table>
+            <thead><tr><th>ID</th><th>Client</th><th>Téléphone</th><th>Date</th><th>Total</th><th>Statut</th><th>Action</th></tr></thead>
+            <tbody id="all-orders-tbody"></tbody>
+          </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Customers -->
+      <div class="admin-section" id="admin-customers">
+        <div class="admin-header"><h1>Clients</h1><p>Base de données clients</p></div>
+        <div class="admin-table-wrap">
+          <div class="admin-table-header"><h3>Clients enregistrés</h3></div>
+          <div class="table-scroll">
+          <table>
+            <thead><tr><th>Nom</th><th>Email</th><th>Téléphone</th><th>Commandes</th><th>Total dépensé</th></tr></thead>
+            <tbody id="customers-tbody"></tbody>
+          </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings -->
+      <div class="admin-section" id="admin-settings">
+        <div class="admin-header"><h1>Paramètres</h1><p>Configuration de la boutique, notifications et sauvegarde</p></div>
+
+        <div class="settings-card">
+          <h3>🏬 Boutique</h3>
+          <div class="form-grid">
+            <div class="form-group"><label>Nom de la boutique</label><input type="text" id="s-shopname"></div>
+            <div class="form-group"><label>Devise</label><input type="text" id="s-currency" placeholder="FCFA"></div>
+            <div class="form-group"><label>Livraison gratuite dès (FCFA)</label><input type="number" id="s-freeship"></div>
+            <div class="form-group"><label>Frais de livraison (FCFA)</label><input type="number" id="s-shipfee"></div>
+            <div class="form-group"><label>Seuil de stock bas (alerte)</label><input type="number" id="s-lowstock" placeholder="5"></div>
+          </div>
+          <button class="btn-save" onclick="saveShopSettings()">💾 Enregistrer</button>
+        </div>
+
+
+        <div class="settings-card">
+          <h3>📝 À propos & contact</h3>
+          <div class="form-grid" style="grid-template-columns:1fr;">
+            <div class="form-group"><label>Description de la boutique</label><textarea id="s-aboutdesc" rows="3"></textarea></div>
+            <div class="form-row">
+              <div class="form-group"><label>Email de contact</label><input type="email" id="s-email" placeholder="contact@leotech.cm"></div>
+              <div class="form-group"><label>Adresse / Ville</label><input type="text" id="s-address" placeholder="Douala, Cameroun"></div>
+            </div>
+          </div>
+          <button class="btn-save" onclick="saveShopSettings()">💾 Enregistrer</button>
+        </div>
+
+        <div class="settings-card">
+          <h3>🔗 Réseaux sociaux</h3>
+          <div class="form-grid">
+            <div class="form-group"><label>Lien Facebook</label><input type="text" id="s-facebook" placeholder="https://facebook.com/..."></div>
+            <div class="form-group"><label>Lien Instagram</label><input type="text" id="s-instagram" placeholder="https://instagram.com/..."></div>
+          </div>
+          <div class="settings-note">Laissez vide pour ne pas afficher l'icône correspondante dans le pied de page.</div>
+          <button class="btn-save" onclick="saveShopSettings()">💾 Enregistrer</button>
+        </div>
+
+        <div class="settings-card">
+          <h3>🎉 Offre spéciale (popup d'accueil)</h3>
+          <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:1rem;">S'affiche une fois quand un visiteur ouvre le site ; il peut suivre l'offre ou la fermer.</p>
+          <div class="form-group" style="flex-direction:row;align-items:center;gap:0.6rem;margin-bottom:1rem;">
+            <input type="checkbox" id="s-offer-enabled" style="width:auto;">
+            <label style="margin:0;font-size:0.88rem;">Activer la popup d'offre</label>
+          </div>
+          <div class="form-grid">
+            <div class="form-group"><label>Titre</label><input type="text" id="s-offer-title" placeholder="Offre spéciale du jour"></div>
+            <div class="form-group"><label>Badge / réduction</label><input type="text" id="s-offer-badge" placeholder="-15%"></div>
+            <div class="form-group"><label>Texte du bouton</label><input type="text" id="s-offer-cta" placeholder="Voir les offres"></div>
+            <div class="form-group"><label>Cible du bouton</label>
+              <select id="s-offer-target" onchange="document.getElementById('s-offer-cat-wrap').style.display=this.value==='category'?'flex':'none'">
+                <option value="shop">Toute la boutique</option>
+                <option value="category">Une catégorie précise</option>
+              </select>
+            </div>
+            <div class="form-group" id="s-offer-cat-wrap" style="display:none;"><label>Catégorie</label>
+              <select id="s-offer-category">
+                <option>Smartphone</option><option>Ordinateur</option><option>Audio</option><option>TV</option><option>Accessoire</option>
+              </select>
+            </div>
+            <div class="form-group"><label>Expire le (optionnel)</label><input type="date" id="s-offer-expires"></div>
+          </div>
+          <div class="form-group" style="margin-top:0.8rem;"><label>Description</label><textarea id="s-offer-desc" rows="2" placeholder="Profitez de réductions exceptionnelles cette semaine..."></textarea></div>
+          <div style="margin-top:1rem;">
+            <label style="font-size:0.82rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:0.5rem;">Image (optionnel)</label>
+            <div class="img-upload-zone" onclick="document.getElementById('s-offer-image-file').click()">📷 Cliquez pour choisir une image</div>
+            <input type="file" id="s-offer-image-file" accept="image/*" style="display:none" onchange="handleOfferImageFile(event)">
+            <div class="url-add-row">
+              <input type="text" id="s-offer-image-url" placeholder="ou collez une URL d'image">
+              <button class="btn-small" onclick="setOfferImageUrl()">+ Utiliser cette URL</button>
+            </div>
+            <div class="img-thumbs" id="s-offer-image-thumb"></div>
+          </div>
+          <div style="display:flex;gap:1rem;margin-top:1.2rem;flex-wrap:wrap;">
+            <button class="btn-save" onclick="saveOfferSettings()">💾 Enregistrer l'offre</button>
+            <button class="btn-small" onclick="maybeShowOffer(true)">👁 Aperçu</button>
+          </div>
+        </div>
+
+        <div class="settings-card">
+          <h3>🌍 Rendre ces réglages visibles pour tous vos visiteurs</h3>
+          <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:0.8rem;line-height:1.6;">
+            Important : ce formulaire n'enregistre les réglages que <strong>dans ce navigateur</strong> (pratique pour tester). Un visiteur qui découvre votre site sur GitHub Pages depuis un autre appareil verra toujours les valeurs par défaut écrites dans le code. Pour changer ce que <strong>tout le monde</strong> voit, générez le code ci-dessous et collez-le dans <strong>app.js</strong> avant de republier.
+          </p>
+          <button class="btn-small" onclick="openConfigModal()">📋 Générer le code à coller dans app.js</button>
+        </div>
+
+        <div class="settings-card">
+          <h3>📲 Notifications WhatsApp</h3>
+          <div class="form-grid">
+            <div class="form-group" style="grid-column:1/-1">
+              <label>Numéro WhatsApp de la boutique (format international, sans "+")</label>
+              <input type="text" id="s-whatsapp" placeholder="237657261108">
+            </div>
+          </div>
+          <div class="settings-note">
+            À chaque commande, une conversation WhatsApp pré-remplie avec le récapitulatif s'ouvre automatiquement vers ce numéro (le client n'a plus qu'à appuyer sur Envoyer). C'est la méthode utilisée par la plupart des boutiques en ligne sans serveur : ce site étant 100% statique (HTML/JS), l'envoi automatique et silencieux d'un message WhatsApp sans aucune action n'est pas possible — cela demanderait un backend avec l'API WhatsApp Business.
+          </div>
+          <button class="btn-save" onclick="saveShopSettings()">💾 Enregistrer</button>
+          <div style="margin-top:1rem;">
+            <button class="btn-small" onclick="requestNotifPermission()">🔔 Activer les notifications navigateur</button>
+          </div>
+        </div>
+
+        <div class="settings-card">
+          <h3>🔐 Identifiants administrateur</h3>
+          <div class="form-grid">
+            <div class="form-group"><label>Identifiant</label><input type="text" id="s-adminuser"></div>
+            <div class="form-group"><label>Nouveau mot de passe</label><input type="password" id="s-adminpass" placeholder="Laisser vide pour ne pas changer"></div>
+          </div>
+          <button class="btn-save" onclick="saveAdminCreds()">💾 Mettre à jour</button>
+          <div class="settings-warn">⚠️ Ces identifiants sont stockés dans le navigateur (localStorage), pas sur un serveur. N'importe qui ayant accès à cet ordinateur ou aux outils développeur du navigateur peut les lire. Pour une vraie protection en production, il faut une authentification côté serveur.</div>
+        </div>
+
+        <div class="settings-card">
+          <h3>💾 Sauvegarde des données</h3>
+          <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:1rem;">Toutes les données (produits, commandes, réglages) sont stockées uniquement dans ce navigateur. Exportez régulièrement une sauvegarde JSON, surtout avant de vider le cache ou de changer d'ordinateur.</p>
+          <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+            <button class="btn-small" onclick="exportData()">⬇ Exporter les données (JSON)</button>
+            <button class="btn-small" onclick="document.getElementById('import-file').click()">⬆ Importer une sauvegarde</button>
+            <input type="file" id="import-file" accept="application/json" style="display:none" onchange="importData(event)">
+          </div>
+        </div>
+
+        <div class="settings-card danger-zone">
+          <h3>🗑 Zone de danger</h3>
+          <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:1rem;">Réinitialise le catalogue et les commandes aux données de démonstration. Irréversible.</p>
+          <button class="btn-del" style="padding:0.6rem 1.2rem;" onclick="resetDemoData()">Réinitialiser les données de démo</button>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+
+<!-- ─── OFFRE SPÉCIALE (popup d'accueil) ────────────── -->
+<div class="modal-overlay" id="offer-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div></div>
+      <button class="modal-close" onclick="closeOfferModal(true)">✕</button>
+    </div>
+    <div class="offer-body">
+      <div id="offer-image-wrap"></div>
+      <div class="offer-badge" id="offer-badge" style="display:none"></div>
+      <h2 id="offer-title"></h2>
+      <p id="offer-desc"></p>
+      <button class="btn-primary" style="width:100%" id="offer-follow-btn" onclick="followOffer()">Voir l'offre</button>
+      <button class="offer-dismiss" onclick="closeOfferModal(true)">Non merci, continuer mes achats</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─── ORDER DETAIL MODAL ─────────────────────────── -->
+<div class="modal-overlay" id="order-modal">
+  <div class="modal" style="max-width:520px;">
+    <div class="modal-header">
+      <h3 style="font-family:var(--font-display)">Détail de la commande</h3>
+      <button class="modal-close" onclick="closeOrderModal()">✕</button>
+    </div>
+    <div style="padding:1.5rem;" id="order-modal-body"></div>
+  </div>
+</div>
+
+
+<!-- ─── CONFIG CODE MODAL ──────────────────────────── -->
+<div class="modal-overlay" id="config-modal">
+  <div class="modal" style="max-width:640px;">
+    <div class="modal-header">
+      <h3 style="font-family:var(--font-display)">Code de configuration</h3>
+      <button class="modal-close" onclick="closeConfigModal()">✕</button>
+    </div>
+    <div style="padding:1.5rem;">
+      <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:1rem;">
+        Copiez ce bloc et remplacez l'objet <code>DEFAULT_SETTINGS</code> dans le fichier <code>app.js</code> (vers le haut du fichier) puis republiez sur GitHub — c'est ce que verront <strong>tous vos visiteurs</strong> par défaut.
+      </p>
+      <textarea id="config-code-text" readonly onclick="this.select()"></textarea>
+      <button class="btn-small" style="margin-top:0.8rem" onclick="copyConfigCode()">📋 Copier</button>
+    </div>
+  </div>
+</div>
+
+
+<script src="app.js"></script>
+<script>
+// ─── INIT (spécifique à l'admin) ────────────────────────────────────
+loadDB();
+saveDB();
+</script>
+</body>
+</html>
